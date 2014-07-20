@@ -1,10 +1,42 @@
 #!/usr/lib/python
 #-*- coding:utf8 -*-
-import re
+from optparse import OptionParser
+
+msg_usage = 'usage: %prog [-S] samfile [-V] vcffile [-O] outputfile'
+descr ='''This script is used to call base in each SNP site in vcffile.
+Because vcf files from freebayes, GATK, specially samtools always contain
+wrong information on AO and RO iterms. In order to evaluate Callers accuracy,
+this script born. You should have a sam file and a vcf file which offer the
+SNP sites. The sam file usually come from bam file which is binary file of sam
+file. Currently, the bam file have been splited N caigar cause RNAseq data.
+'''
+optparser = OptionParser(usage = msg_usage, description = descr)
+optparser.add_option('-S', '--sam', dest = 'samname',
+                     help = 'input the sam file name.')
+optparser.add_option('-V', '--vcf', dest = 'vcfname',
+                     help = 'input the vcf file name.')
+optparser.add_option('-O', '--out', dest = 'output',
+                     help = 'output file name.')
+options, args = optparser.parse_args()
+
+def SNP_sites(vcffile):
+    '''Get snp sites information from a vcf file, return a list contain those
+    informations'''
+    f0 = open(vcffile, 'r')
+    global snp_site_list
+    snp_site_list = []
+    for i in f0:
+        if i.startswith('#'):
+            pass
+        else:
+            j = i.split()[0] + '-' + i.split()[1] + '-' + i.split()[3]
+            snp_site_list.append(j)
+    f0.close()
+    return snp_site_list
 
 def parseCIGAR(cigar):
     '''parse the cigar field and calculate the read truth length.
-    return the length in int.'''
+    return two dictionaries about cigar info.'''
     ligation = ''
     dic1 = {}
     dic2 = {}
@@ -31,18 +63,13 @@ def parseCIGAR(cigar):
     return dic1,dic2
 
 def parse_read(dic1, CIGARorder, readlist, start_site):
-    '''eg:dic1={'I': '1-1', 'M': '31-20-48'},
-    CIGARorder=[M,I,M,I,M],
-    read=['A','T','C','T','G','T','C','A','T','C','T','G','T'],
-    start_site=2089
+    '''assign each read base a cordinate number based on refsequence.
+    return a dictionary {cordinate:base}
     '''
-    countM = CIGARorder.count('M') #3
-    countI = CIGARorder.count('I') #2
-    countD = CIGARorder.count('D') #0
-    Mn = 0
-    In = 0
-    Dn = 0
-    upper = 0
+    countM = CIGARorder.count('M')
+    countI = CIGARorder.count('I')
+    countD = CIGARorder.count('D')
+    Mn, In, Dn, upper = 0
     for i in CIGARorder:
         if i == 'M' and Mn < countM:
             upper += int(dic1[i].split('-')[Mn])
@@ -62,30 +89,18 @@ def parse_read(dic1, CIGARorder, readlist, start_site):
         read_dict[i+start_site] = j
     return read_dict
 
-def positions(vcffile):
-    '''get snp sites information from a vcf file, return a list contain those
-    informations'''
-    f0 = open(vcffile, 'r')
-    global snp_site_list
-    snp_site_list = []
-    for i in f0:
-        if i.startswith('#'):
-            pass
-        else:
-            j = '-'.join(i.split()[0:2])
-            snp_site_list.append(j)
-    f0.close()
-    return snp_site_list
-
-def findbase(samfile):
-    '''samfile is converted by somtools view, so no header informations
+def callbase(samfile, out):
+    '''samfile is converted by 'somtools view', so no header informations.
     '''
     f0 = open(samfile, 'r')
-    f1 = open('result.txt', 'w')
-    f1.write('ref-name\t'+'position\t'+'A\t'+'T\t'+'C\t'+'G\t'+'other\n')
+    f1 = open(out, 'w')
+    f1.write('ref-name\t' + 'position\t' + 'ROi\t' + 'A\t' + 'T\t' + 'C\t' \
++ 'G\t' + 'other\n')
     for i in snp_site_list:
-        O_refname = i.split('-')[0] #O means snp site information
-        O_position = int(i.split('-')[1])
+        k = i.split('-')
+        O_refname = k[0] #O means snp site information
+        O_position = int(k[1])
+        refbase = k[2]
         print O_refname + '-' + str(O_position)
         Acount, Tcount, Ccount, Gcount, othercount = 0, 0, 0, 0, 0
         for j in f0:
@@ -121,16 +136,18 @@ def findbase(samfile):
                     elif yourbase == 'G':
                         Gcount += 1
                     else:
-                        print yourbase
                         othercount += 1
-        f1.write(O_refname+'\t'+str(O_position)+'\t'+str(Acount)+'\t'+str(Tcount)+'\t'+str(Ccount)+'\t'+str(Gcount)+'\t'+str(othercount)+'\n')
+        f1.write(O_refname + '\t' + refbase + '\t' + str(O_position) + '\t'\
+ + str(Acount) + '\t' + str(Tcount) + '\t' + str(Ccount) + '\t' + \
+ str(Gcount) + '\t' + str(othercount) + '\n')
         f0.seek(0,0)
     f0.close()
     f1.close()
 
 if __name__ == '__main__':
     import sys
-    positions(str(sys.argv[1]))
-    findbase(str(sys.argv[2]))
-
-
+    s = options.samname
+    v = options.vcfname
+    o = options.output
+    SNP_sites(v)
+    callbase(s, o)
