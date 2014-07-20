@@ -146,8 +146,14 @@ def callbase(samfile, out):
 
 if __name__ == '__main__':
     import sys
+    import datetime
+
     s = options.samname
     v = options.vcfname
     o = options.output
+    st = datetime.datetime.now()
     SNP_sites(v)
     callbase(s, o)
+    et = datetime.datetime.now()
+    duration = et - st
+    print duration
