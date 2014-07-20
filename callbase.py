@@ -69,7 +69,7 @@ def parse_read(dic1, CIGARorder, readlist, start_site):
     countM = CIGARorder.count('M')
     countI = CIGARorder.count('I')
     countD = CIGARorder.count('D')
-    Mn, In, Dn, upper = 0
+    Mn, In, Dn, upper = 0, 0, 0, 0
     for i in CIGARorder:
         if i == 'M' and Mn < countM:
             upper += int(dic1[i].split('-')[Mn])
@@ -94,7 +94,7 @@ def callbase(samfile, out):
     '''
     f0 = open(samfile, 'r')
     f1 = open(out, 'w')
-    f1.write('ref-name\t' + 'position\t' + 'ROi\t' + 'A\t' + 'T\t' + 'C\t' \
+    f1.write('ref-name\t' + 'position\t' + 'RO\t' + 'A\t' + 'T\t' + 'C\t' \
 + 'G\t' + 'other\n')
     for i in snp_site_list:
         k = i.split('-')
