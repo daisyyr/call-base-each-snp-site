@@ -137,7 +137,7 @@ def callbase(samfile, out):
                         Gcount += 1
                     else:
                         othercount += 1
-        f1.write(O_refname + '\t' + refbase + '\t' + str(O_position) + '\t'\
+        f1.write(O_refname + '\t' + str(O_position) + '\t' + refbase + '\t'\
  + str(Acount) + '\t' + str(Tcount) + '\t' + str(Ccount) + '\t' + \
  str(Gcount) + '\t' + str(othercount) + '\n')
         f0.seek(0,0)
