@@ -76,3 +76,5 @@ if __name__ == '__main__':
         split_bychrom(f)
     elif m == 'bynumberoffiles':
         split_bynumberoffiles(f, n)
+    else:
+        print 'please choose the split mode. -h for more help'
