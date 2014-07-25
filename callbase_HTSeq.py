@@ -1,6 +1,7 @@
 #!/usr/lib/python
 #-*- coding:utf8 -*-
 from optparse import OptionParser
+import itertools
 from HTSeq import VCF_Reader
 from HTSeq import BAM_Reader
 from HTSeq import SAM_Reader
@@ -46,36 +47,34 @@ def dict_read(aln_obj):
     return read_dict
 
 def callbase(bamfile, vcffile, out):
-    BF = SAM_Reader(bamfile) #bam file
+    BF = BAM_Reader(bamfile) #bam file
     VF = VCF_Reader(vcffile) #vcf file
     RF = open(out, 'w') #result file
     RF.write('ref-name\t' + 'position\t' + 'RO\t' + 'A\t' + 'T\t' + 'C\t' \
 + 'G\t' + 'N\t' + 'None\t' + 'others\n')
 #the first line of the RF, position is what in vcf file,1-based
+    begin = 0
     for i in VF:
         vcf_refname = i.chrom
         vcf_position = i.pos.pos -1 # change vcf_position into 0-based
         refbase = i.ref
         print i.chrom + '-' + str(i.pos.pos)
-        At, Tt, Ct, Gt, Nt, nonet, othert = 0, 0, 0, 0, 0, 0, 0
-        for j in BF:
+        begin, At, Tt, Ct, Gt, Nt, nonet, othert = 0, 0, 0, 0, 0, 0, 0, 0
+        for ofset, j in enumerate(itertools.islice(BF, begin, None)):
             bam_refname = j.iv.chrom
             bam_start = j.iv.start
             bam_end = j.iv.end - 1
             if (vcf_refname == bam_refname and vcf_position >= bam_start
                 and vcf_position <= bam_end):
+                begin += ofset
                 readdict = dict_read(j) # j is aln object
                 yourbase = readdict[vcf_position]
-                print yourbase
                 if yourbase == 'A':
                     At += 1
                 elif yourbase == 'T':
                     Tt += 1
                 elif yourbase == 'C':
                     Ct += 1
-                    print j.read.name, j.read_as_aligned.seq
-                    for i in j.cigar:
-                        print i.type, i.size
                 elif yourbase == 'G':
                     Gt += 1
                 elif yourbase == 'N':
