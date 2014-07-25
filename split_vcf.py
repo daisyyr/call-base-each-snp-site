@@ -3,21 +3,21 @@ from optparse import OptionParser
 from HTSeq import VCF_Reader
 
 msg_usage = 'usage: %prog [-F] vcffile [-M] mode'
-descr ='''Cause callbase.py have to pass bam file each line and bam
+descr ='''As callbase.py have to pass bam file each line and bam
 file always very big. I can't tackle this situation in mutiple threads by python,
 so I wanna split vcf file first, then run the callbase.py with defferent vcf
-file simutaneously.
+files simutaneously.
 '''
 optparser = OptionParser(usage = msg_usage, description = descr)
 optparser.add_option('-F', '--file', dest = 'filename',
-                     help = 'input the vcf file name.')
+                     help = 'Input the vcf file name.')
 optparser.add_option('-M', '--mode', dest = 'splitmode',
-                     help = "which mode do you wanna choose,bychrom or bynumberoffiles.\
+                     help = "Which mode do you wanna choose,bychrom or bynumberoffiles.\
                      \tbychrom: splited by differnt chromosome.\t\
 bynumberoffiles: how many files you wanna to get.")
 optparser.add_option('-N', '--numberoffiles', dest = 'numberoffiles',
                      type = 'int',
-                     help = 'input how many files you wanna to get.')
+                     help = 'Input how many files you wanna to get.')
 options, args = optparser.parse_args()
 
 def split_bychrom(vcffile):
@@ -77,4 +77,4 @@ if __name__ == '__main__':
     elif m == 'bynumberoffiles':
         split_bynumberoffiles(f, n)
     else:
-        print 'please choose the split mode. -h for more help'
+        print 'Please choose the split mode. -h for more help.'
