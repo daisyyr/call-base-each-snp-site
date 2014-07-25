@@ -24,6 +24,8 @@ options, args = optparser.parse_args()
 
 
 def dict_read(aln_obj):
+    '''parse aligned object, then generate a dictionary containing
+    coordinate and base. return this dictionary'''
     readlist = [i for i in aln_obj.read_as_aligned.seq]
     start = aln_obj.iv.start
     upper = 0
