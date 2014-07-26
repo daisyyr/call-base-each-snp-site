@@ -12,9 +12,9 @@ optparser = OptionParser(usage = msg_usage, description = descr)
 optparser.add_option('-F', '--file', dest = 'filename',
                      help = 'Input the vcf file name.')
 optparser.add_option('-M', '--mode', dest = 'splitmode',
-                     help = "Which mode do you wanna choose,bychrom or bynumberoffiles.\
-                     \tbychrom: splited by differnt chromosome.\t\
-bynumberoffiles: how many files you wanna to get.")
+                     help = '''Which mode do you wanna choose,
+                     bychrom: splited by differnt chromosome.
+                     bynumberoffiles: how many files you wanna to get.''')
 optparser.add_option('-N', '--numberoffiles', dest = 'numberoffiles',
                      type = 'int',
                      help = 'Input how many files you wanna to get.')
