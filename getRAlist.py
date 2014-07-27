@@ -3,7 +3,7 @@ from optparse import OptionParser
 
 msg_usage = 'usage: %prog [-C] common_file [-F] fb_file [-G] gatk_file [-S] sb_file'
 descr ='''Caculate the each files' A and R of common snp site which recorded in
-common_file. The results will used to plot which compare the accuracy between
+common_file. The results will used to plot which compare the accuracy among
 the three Callers.
 '''
 optparser = OptionParser(usage = msg_usage, description = descr)
