@@ -92,15 +92,15 @@ def listforplot(realfile, fbfile, gatkfile, sbfile):
                 sb_A.append('norecord')
     sb.close()
     positions = [int(i) for i in positions_str]
-    print 'positions:\n%s\n%s\n'%(positions, len(positions))
-    print 'real_R:\n%s\n%s\n'%(real_R, len(real_R))
-    print 'real_A:\n%s\n%s\n'%(real_A, len(real_A))
-    print 'fb_R:\n%s\n%s\n'%(fb_R, len(fb_R))
-    print 'fb_A:\n%s\n%s\n'%(fb_A, len(fb_A))
-    print 'gatk_R:\n%s\n%s\n'%(gatk_R, len(gatk_R))
-    print 'gatk_A:\n%s\n%s\n'%(gatk_A, len(gatk_A))
-    print 'sb_R:\n%s\n%s\n'%(sb_R, len(sb_R))
-    print 'sb_A:\n%s\n%s\n'%(sb_A, len(sb_A))
+#    print 'positions:\n%s\n%s\n'%(positions, len(positions))
+#    print 'real_R:\n%s\n%s\n'%(real_R, len(real_R))
+#    print 'real_A:\n%s\n%s\n'%(real_A, len(real_A))
+#    print 'fb_R:\n%s\n%s\n'%(fb_R, len(fb_R))
+#    print 'fb_A:\n%s\n%s\n'%(fb_A, len(fb_A))
+#    print 'gatk_R:\n%s\n%s\n'%(gatk_R, len(gatk_R))
+#    print 'gatk_A:\n%s\n%s\n'%(gatk_A, len(gatk_A))
+#    print 'sb_R:\n%s\n%s\n'%(sb_R, len(sb_R))
+#    print 'sb_A:\n%s\n%s\n'%(sb_A, len(sb_A))
     return positions, real_R, real_A, fb_R, fb_A, gatk_R, gatk_A, sb_R, sb_A
 
 def do_plot(realfile, fbfile, gatkfile, sbfile):
@@ -138,7 +138,7 @@ listforplot(realfile, fbfile, gatkfile, sbfile)
     real_fb_R_min = min(real_fb_R)
     real_gatk_R_min = min(real_gatk_R)
     real_sb_R_min = min(real_sb_R)
-    R_min = min(real_fb_A_min, real_gatk_A_min, real_sb_A_min)
+    R_min = min(real_fb_R_min, real_gatk_R_min, real_sb_R_min)
 
 
     real_fb_A_min = min(real_fb_A)
@@ -146,29 +146,36 @@ listforplot(realfile, fbfile, gatkfile, sbfile)
     real_sb_A_min = min(real_sb_A)
     A_min = min(real_fb_A_min, real_gatk_A_min, real_sb_A_min)
 
+    print 'pos_min: %s.'%pos_min  #195013
+    print 'pos_max: %s.'%pos_max  #42354375
+    print 'R_min: %s.'%R_min      #-1
+    print 'R_max: %s.'%R_max      #1472
+    print 'A_min: %s.'%A_min      #-10
+    print 'A_max: %s.'%A_max      #7356
+
     plt.figure(1)
     plt.subplot(1,1,1)
-    plt.axis([pos_min, pos_max, R_min, R_max])
+    plt.axis([195000, 42400000, -1, 700])
     plt.title('R accuracy')
-    plt.xlabe('SNP sites')
-    plt.ylabe('callersR-realR')
+    plt.xlabel('SNP sites')
+    plt.ylabel('realR - callersR')
 
-    fblineR, = plt.plot(pos, real_fb_R, 'bs-')
-    gatklineR, = plt.plot(pos, real_gatk_R, 'r^-'),
-    sblineR, = plt.plot(pos, real_sb_R, 'yo-')
+    fblineR, = plt.plot(pos, real_fb_R, 'b-', linewidth=0.5)
+    gatklineR, = plt.plot(pos, real_gatk_R, 'r-', linewidth=0.5),
+    sblineR, = plt.plot(pos, real_sb_R, 'y-', linewidth=0.5)
     plt.legend([fblineR, gatklineR, sblineR], ['freebayes', 'GATK', 'samtools'])
     plt.savefig('R_accuracy.pdf')
 
     plt.figure(2)
     plt.subplot(1,1,1)
-    plt.axis([pos_min, pos_max, A_min, A_max])
+    plt.axis([195000, 42400000, -10, 2500])
     plt.title('A accuracy')
-    plt.xlabe('SNP sites')
-    plt.ylabe('callersA-realA')
+    plt.xlabel('SNP sites')
+    plt.ylabel('realA - callersA')
 
-    fblineA, = plt.plot(pos, real_fb_A, 'bs-')
-    gatklineA, = plt.plot(pos, real_gatk_A, 'r^-'),
-    sblineA, = plt.plot(pos, real_sb_A, 'yo-')
+    fblineA, = plt.plot(pos, real_fb_A, 'b-', linewidth=0.5)
+    gatklineA, = plt.plot(pos, real_gatk_A, 'r-', linewidth=0.5),
+    sblineA, = plt.plot(pos, real_sb_A, 'y-', linewidth=0.5)
     plt.legend([fblineA, gatklineA, sblineA], ['freebayes', 'GATK', 'samtools'])
     plt.savefig('A_accuracy.pdf')
 
