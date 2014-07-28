@@ -1,6 +1,5 @@
 #!/usr/lib/python
 from optparse import OptionParser
-import numpy as np
 
 msg_usage = 'usage: %prog [-R] real_file [-F] fb_file [-G] gatk_file [-S] sb_file'
 descr ='''Caculate the each files' A and R of common snp site which recorded in
