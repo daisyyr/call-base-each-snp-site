@@ -35,7 +35,7 @@ def common_vcf(x, y, z):
     common_set = vf1_set & vf2_set & vf3_set
     rf = open('common_sites.vcf', 'w')
     for i in open(x, 'r'):
-        if not x.startswith('#'):
+        if not i.startswith('#'):
             obj = i.split()[0] + '-' + i.split()[1]
             if obj in common_set:
                 rf.write(i)
