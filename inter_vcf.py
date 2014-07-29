@@ -4,7 +4,8 @@ from optparse import OptionParser
 
 msg_usage = 'usage: %prog [-F] fb_file [-G] gatk_file [-S] sb_file'
 descr ='''get the common snp site from three different softwares.
-record those common sites with freebayse describe info.
+record those common sites with freebayse describe info without head
+lines.
 '''
 optparser = OptionParser(usage = msg_usage, description = descr)
 optparser.add_option('-F', '--fb', dest = 'fbfile',
