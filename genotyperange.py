@@ -55,10 +55,8 @@ def get_RA_gp(cnfb, cngatk, cnsb):   #gp: genotype
     return arrRdiviA, fb_genotype, gatk_genotype, sb_genotype
 
 if __name__ == '__main__':
-    import sys
 
     f = options.commonfbfile
     g = options.commongatkfile
     s = options.commonsbfile
-#    get_RA_gp(sys.argv[1], sys.argv[2], sys.argv[3])
     get_RA_gp(f, g, s)
