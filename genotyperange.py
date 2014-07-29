@@ -47,10 +47,10 @@ def get_RA_gp(cnfb, cngatk, cnsb):   #gp: genotype
         ob = SBVcf(i)
         sb_genotype.append(ob.genotype)
     sbfile.close()
-    print arrRdiviA, arrRdiviA.shape
-    print fb_genotype, len(fb_genotype)
-    print gatk_genotype, len(gatk_genotype)
-    print sb_genotype, len(sb_genotype)
+    print arrRdiviA, arrRdiviA.shape, 'max: %f'%(max(arrRdiviA)), 'min:%f'%(min(arrRdiviA))
+    print len(fb_genotype)
+    print len(gatk_genotype)
+    print len(sb_genotype)
 
     return arrRdiviA, fb_genotype, gatk_genotype, sb_genotype
 
