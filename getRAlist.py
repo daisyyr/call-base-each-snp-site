@@ -4,8 +4,8 @@ from optparse import OptionParser
 msg_usage = 'usage: %prog [-R] real_file [-F] fb_file [-G] gatk_file [-S] sb_file'
 descr ='''Caculate the each files' A and R of common snp site which recorded in
 common_file. Retuen the lists of positions, real_R, real_A, fb_R, fb_A, gatk_R,
-gatk_A, sb_R, sb_A. The results will used to plot which compare the accuracy among
-the three Callers.
+gatk_A, sb_R, sb_A. The type of these lists are int. The results will used to plot
+which compare the accuracy among the three Callers.
 '''
 optparser = OptionParser(usage = msg_usage, description = descr)
 optparser.add_option('-R', '--real', dest = 'realfile',
