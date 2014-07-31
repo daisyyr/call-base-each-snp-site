@@ -4,8 +4,7 @@ from optparse import OptionParser
 
 msg_usage = 'usage: %prog [-F] fb_file [-G] gatk_file [-S] sb_file'
 descr ='''get the common snp site from three different softwares.
-record those common sites with freebayse describe info without head
-lines.
+generate three files contain common sites with three softwares' info
 '''
 optparser = OptionParser(usage = msg_usage, description = descr)
 optparser.add_option('-F', '--fb', dest = 'fbfile',
@@ -34,13 +33,29 @@ def common_vcf(x, y, z):
     for i in vf3:
         vf3_set.add(i.chrom+'-'+str(i.pos.pos))
     common_set = vf1_set & vf2_set & vf3_set
-    rf = open('common_sites.vcf', 'w')
+    cn1 = open('common_sites_fb.vcf', 'w')
     for i in open(x, 'r'):
         if not i.startswith('#'):
             obj = i.split()[0] + '-' + i.split()[1]
             if obj in common_set:
-                rf.write(i)
-    rf.close()
+                cn1.write(i)
+    cn1.close()
+
+    cn2 = open('common_sites_gatk.vcf', 'w')
+    for i in open(y, 'r'):
+        if not i.startswith('#'):
+            obj = i.split()[0] + '-' + i.split()[1]
+            if obj in common_set:
+                cn2.write(i)
+    cn2.close()
+
+    cn3 = open('common_sites_sb.vcf', 'w')
+    for i in open(z, 'r'):
+        if not i.startswith('#'):
+            obj = i.split()[0] + '-' + i.split()[1]
+            if obj in common_set:
+                cn3.write(i)
+    cn3.close()
 
 if __name__ == '__main__':
     fb = options.fbfile
