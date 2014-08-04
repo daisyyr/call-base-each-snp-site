@@ -6,7 +6,7 @@ msg_usage = 'usage: %prog [-F] vcffile [-M] mode'
 descr ='''As callbase.py have to pass bam file each line and bam
 file always very big. I can't tackle this situation in mutiple threads by python,
 so I wanna split vcf file first, then run the callbase.py with defferent vcf
-files simutaneously.
+files simutaneously. The splited files don't contain header lines.
 '''
 optparser = OptionParser(usage = msg_usage, description = descr)
 optparser.add_option('-F', '--file', dest = 'filename',
@@ -28,8 +28,9 @@ def split_bychrom(vcffile):
     for i in VF:
         chrom_set.add(i.chrom) #get the possible chrom names
     f0 = open(vcffile, 'r')
+    prefix = '.'.join(vcffile.split('.')[0:-1])
     for chr in chrom_set:
-        f1 = open(chr+'.vcf', 'w')
+        f1 = open(prefix+'.'+chr+'.vcf', 'w')
         for i in f0:
             if i.startswith(chr+'\t'):
                 f1.write(i)
