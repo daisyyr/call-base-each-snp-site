@@ -1,7 +1,11 @@
 #!/usr/lib/python
 import subprocess
 '''
-split bam files by @SN
+split bam files by @SN, so the bam file must have header which contain
+@SN information. The bam file also must have bai file because I use
+samtools view command.
+usage: python split_bam.py yourbamfile
+the results will generated at currently directory.
 '''
 def parseheader(bamfiles):
     cmd = 'samtools view -H %s'%bamfiles
