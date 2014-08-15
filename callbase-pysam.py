@@ -26,30 +26,38 @@ class ParseSNPsitesLine():
     def __init__(self, line):
         self.chrom = line.split()[0]
         self.pos = int(line.split()[1])
+        self.Rbase = line.split()[3]
+        self.Abase = line.split()[4]
 
 def callbase(bamfile, snpsites, out):
     BF = Samfile(bamfile, 'rb') #open your bam file
     SF = open(snpsites, 'r')    #the file contain snp sites info
     RF = open(out, 'w')         #resulte file
-    RF.write('ref_name\tpos\tA\tT\tC\tG\tN\tothers\n')
+    RF.write('ref_name\tpos\tRbase\tAbase\tA\tT\tC\tG\tN\tothers\n')
     for i in SF:
-        line = ParseSNPsitesLine(i)
-        vcf_pos = line.pos-1 #change 1-base to 0-based
-        vcf_refname = line.chrom
-        print 'processing: %s %s...'%(vcf_refname, str(vcf_pos))
-        At, Tt, Ct, Gt, Nt, othert = 0, 0, 0, 0, 0, 0
-        for i in BF.pileup(vcf_refname, vcf_pos, vcf_pos+1):
-            if i.pos == vcf_pos:
-                for j in i.pileups:
-                    yourbase = j.alignment.seq[j.qpos]
-                    if yourbase == 'A': At += 1
-                    elif yourbase == 'T': Tt += 1
-                    elif yourbase == 'C': Ct += 1
-                    elif yourbase == 'G': Gt += 1
-                    elif yourbase == 'N': Nt += 1
-                    else: othert += 1
-        RF.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n'%(vcf_refname, \
-str(vcf_pos+1), str(At), str(Tt), str(Ct), str(Gt), str(Nt), str(othert)))
+        if i.startswith('#'):
+            continue
+        else:
+            line = ParseSNPsitesLine(i)
+            vcf_pos = line.pos-1 #change 1-base to 0-based
+            vcf_refname = line.chrom
+            print 'processing: %s %s...'%(vcf_refname, str(vcf_pos))
+            At, Tt, Ct, Gt, Nt, othert = 0, 0, 0, 0, 0, 0
+            for i in BF.pileup(vcf_refname, vcf_pos, vcf_pos+1):
+                if i.pos == vcf_pos:
+                    vcf_Rbase = line.Rbase
+                    vcf_Abase = line.Abase
+                    for j in i.pileups:
+                        yourbase = j.alignment.seq[j.qpos]
+                        if yourbase == 'A': At += 1
+                        elif yourbase == 'T': Tt += 1
+                        elif yourbase == 'C': Ct += 1
+                        elif yourbase == 'G': Gt += 1
+                        elif yourbase == 'N': Nt += 1
+                        else: othert += 1
+        RF.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n'%(vcf_refname, \
+str(vcf_pos+1), vcf_Rbase, vcf_Abase, str(At), str(Tt), str(Ct), str(Gt), \
+str(Nt), str(othert)))
     BF.close()
 
 if __name__ == '__main__':
